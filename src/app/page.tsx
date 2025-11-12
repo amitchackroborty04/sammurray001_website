@@ -1,12 +1,24 @@
-import { Button } from '@/components/ui/button'
-import React from 'react'
+import AboutSection from "@/components/web/about-section";
+import BrowseProperties from "@/components/web/browse-properties";
+import FeaturedListings from "@/components/web/featured-listings";
+import Footer from "@/components/web/footer";
+import Header from "@/components/web/header";
+import Hero from "@/components/web/hero";
+import MapSection from "@/components/web/map-section";
+import ProcessSteps from "@/components/web/process-steps";
 
-const page = () => {
+
+export default function Home() {
   return (
-    <div className='p-10'>
-      <Button >Click Me</Button>
-    </div>
+    <main className="bg-[#070E28]">
+      <Header />
+      <Hero />
+      <ProcessSteps />
+      <FeaturedListings />
+      <MapSection />
+      <AboutSection />
+      <BrowseProperties/>
+      <Footer />
+    </main>
   )
 }
-
-export default page
