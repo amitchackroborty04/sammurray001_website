@@ -16,7 +16,6 @@ export default function Home() {
       <FeaturedListings />
       <BrowseProperties/>
       <AboutSection />
-      
    
     </main>
   )
