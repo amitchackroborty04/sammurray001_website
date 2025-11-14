@@ -8,7 +8,7 @@ function layout({ children }: { children: React.ReactNode }) {
     <div>
       <Header />
       <div className="bg-[#070E28]">{children}</div>
-       <div className="mx-2">
+       <div className="bg-[#070E28] p-4">
        <Footer />
        </div>
     </div>

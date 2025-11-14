@@ -26,67 +26,60 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="bg-[#1a2847] rounded-2xl p-6 sm:p-8">
-      <h3 className="text-white text-xl font-bold mb-6">Send Inquiry</h3>
+    <div className="bg-[#FFFFFF]/10 rounded-2xl p-6 sm:p-4">
+      <h3 className="bg-text-gradient bg-clip-text text-transparent text-2xl font-bold ">For Sale</h3>
+      <h2 className="text-[32px] font-bold text-[#FFFFFFFf] mb-4">$1,000,000</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Full Name */}
         <div>
-          <label className="block text-gray-300 text-sm mb-2">Full Name</label>
+          <label className="block text-[#FFFFFF] text-basemb-2 mb-2">Full Name</label>
           <input
             type="text"
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
             placeholder="Name Here"
-            className="w-full bg-[#0f1729] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B35] transition-colors"
+            className="w-full bg-transparent border border-[#BFBFBF] rounded-[4px] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#BFBFBF]/80 transition-colors"
           />
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-gray-300 text-sm mb-2">Email Address</label>
+          <label className="block text-[#FFFFFF] text-basemb-2 mb-2">Email Address</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="hello@example.com"
-            className="w-full bg-[#0f1729] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B35] transition-colors"
+            className="w-full bg-transparent border border-[#BFBFBF] rounded-[4px] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#BFBFBF]/80 transition-colors"
           />
         </div>
 
         {/* Phone */}
         <div>
-          <label className="block text-gray-300 text-sm mb-2">Phone Number</label>
+          <label className="block text-[#FFFFFF] text-basemb-2 mb-2">Phone Number</label>
           <input
             type="tel"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="(509) 555-0106"
-            className="w-full bg-[#0f1729] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B35] transition-colors"
+            className="w-full bg-transparent border border-[#BFBFBF] rounded-[4px] px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#BFBFBF]/80 transition-colors"
           />
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-[#00BCD4] hover:bg-[#00ACC1] text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 mt-6"
+          className="w-full bg-gradient hover:bg-gradient/80 text-white font-midium py-3 px-4 rounded-lg transition-colors duration-200 mt-6"
         >
-          Send
+          Submit
         </button>
       </form>
 
-      {/* Avatar Indicators */}
-      <div className="flex justify-center gap-2 mt-6">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#E55A24] flex items-center justify-center text-white font-bold text-sm">
-          A
-        </div>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00BCD4] to-[#0097A7] flex items-center justify-center text-white font-bold text-sm">
-          S
-        </div>
-      </div>
+    
     </div>
   )
 }

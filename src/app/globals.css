@@ -77,3 +77,11 @@
     font-family: var(--font-playfair-display), serif;
   }
 }
+
+
+.text-gradient {
+  background: linear-gradient(90deg, #0078B8 0%, #229F99 101.35%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+

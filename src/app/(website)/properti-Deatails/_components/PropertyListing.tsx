@@ -9,83 +9,90 @@ export default function PropertyListing() {
   const [isWishlisted, setIsWishlisted] = useState(false)
 
   return (
-    <div className="min-h-screen container mx-auto">
+    <div className="min-h-screen container mx-auto py-[24px]">
+      
       {/* Hero Image */}
-      <div className="w-full overflow-hidden rounded-b-3xl">
+      <div className="w-full overflow-hidden rounded-3xl">
         <Image
           src="/assets/card1.png"
           alt="Modern Office Space in CBD"
           width={1000}
           height={1000}
-          className="w-full h-64 sm:h-80 md:h-96 lg:h-[400px] object-cover"
+          className="w-full h-56 sm:h-72 md:h-96 lg:h-[400px] object-cover"
         />
       </div>
 
       {/* Main Content */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 ">
-       
-
-        {/* Grid Layout - Responsive */}
+      <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        
+        {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Property Details & About */}
+
+          {/* Left Column */}
           <div className="lg:col-span-2 space-y-8">
-             {/* Title Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-4xl font-bold text-white mb-3">Modern Office Space in CBD</h1>
-          <div className="flex justify-between items-center" >
-            <div className="flex items-center gap-2 text-[#BFBFBF] text-sm sm:text-2xl mb-4">
-            <MapPin size={18} />
-            <span>Te Aro, Wellington</span>
-            </div>
-               {/* Add to Wishlist Button */}
-            <button
-              onClick={() => setIsWishlisted(!isWishlisted)}
-              className=" bg-[#FF6B35] hover:bg-[#E55A24] text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
-            >
-              <span>+ Add To Wishlist</span>
-            </button>
-          </div>
-        </div>
-            {/* Property Details Card */}
-            <div className="bg-[#1a2847] rounded-2xl p-6 sm:p-8">
-              <div className="grid grid-cols-2 gap-8 mb-8">
-                {/* Type */}
-                <div>
-                  <p className="text-gray-400 text-sm mb-2">Type</p>
-                  <p className="text-white text-lg font-semibold">Commercial</p>
+
+            {/* Title Section */}
+            <div className="mb-8">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3">
+                Modern Office Space in CBD
+              </h1>
+
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                <div className="flex items-center gap-2 text-[#BFBFBF] text-xs sm:text-base">
+                  <MapPin size={16} />
+                  <span>Te Aro, Wellington</span>
                 </div>
-                {/* Size */}
-                <div>
-                  <p className="text-gray-400 text-sm mb-2">Size</p>
-                  <p className="text-white text-lg font-semibold">850 sqm</p>
-                </div>
-                {/* Status */}
-                <div>
-                  <p className="text-gray-400 text-sm mb-2">Status</p>
-                  <p className="text-white text-lg font-semibold">Under Construction</p>
-                </div>
-                {/* Consented */}
-                <div>
-                  <p className="text-gray-400 text-sm mb-2">Consented</p>
-                  <p className="text-white text-lg font-semibold">Consented</p>
-                </div>
-                {/* Completion Date */}
-                <div className="col-span-2">
-                  <p className="text-gray-400 text-sm mb-2">Completion Date</p>
-                  <p className="text-white text-lg font-semibold">24 December 2025</p>
-                </div>
+
+                {/* Wishlist Button */}
+                <button
+                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  className="bg-[#E57525] hover:bg-[#E57525]/80 text-white font-semibold h-[42px] px-4 rounded-lg transition-colors duration-200 text-sm sm:text-base"
+                >
+                  + Add To Wishlist
+                </button>
               </div>
             </div>
 
-            {/* About This Property Card */}
-            <div className="bg-[#1a2847] rounded-2xl p-6 sm:p-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">About This Property</h2>
+            {/* Property Details */}
+            <div className="p-4 sm:p-8  rounded-xl">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mb-6">
 
-              <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
-                A property deed is a written legal document that transfers ownership of a property from one party to
-                another. It includes essential details such as the names of the current and new owners, a legal
-                description of the property, and the date of the transfer. Deeds are signed by the current owner and
-                typically require witnesses and a notary public.
+                <div>
+                  <p className="text-[#BFBFBF] text-xs sm:text-sm mb-1">Type</p>
+                  <p className="text-white text-sm sm:text-lg font-semibold">Commercial</p>
+                </div>
+
+                <div>
+                  <p className="text-[#BFBFBF] text-xs sm:text-sm mb-1">Size</p>
+                  <p className="text-white text-sm sm:text-lg font-semibold">850 sqm</p>
+                </div>
+
+                <div>
+                  <p className="text-[#BFBFBF] text-xs sm:text-sm mb-1">Status</p>
+                  <p className="text-white text-sm sm:text-lg font-semibold">Under Construction</p>
+                </div>
+
+                <div>
+                  <p className="text-[#BFBFBF] text-xs sm:text-sm mb-1">Consented</p>
+                  <p className="text-white text-sm sm:text-lg font-semibold">Consented</p>
+                </div>
+
+                <div className="col-span-2">
+                  <p className="text-[#BFBFBF] text-xs sm:text-sm mb-1">Completion Date</p>
+                  <p className="text-white text-sm sm:text-lg font-semibold">24 December 2025</p>
+                </div>
+
+              </div>
+            </div>
+
+            {/* About This Property */}
+            <div className="p-4 sm:p-8  rounded-xl">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-4 sm:mb-6">
+                About This Property
+              </h2>
+
+              <p className="text-[#BFBFBF] text-xs sm:text-base leading-relaxed mb-6">
+                A property deed is a written legal document that transfers ownership of a property from one party to another...
               </p>
 
               <div className="space-y-4">
@@ -93,91 +100,77 @@ export default function PropertyListing() {
                   {
                     title: "Warranty Deed",
                     description:
-                      "Guarantees that the seller owns the property free and clear and has the right to sell it. Provides the highest level of protection to the buyer.",
+                      "Guarantees that the seller owns the property free and clear and has the right to sell it.",
                   },
                   {
                     title: "Quitclaim Deed",
                     description:
-                      "Transfers the seller's interest in the property without making any guarantees about the title. Often used in situations where the transfer is between family members or in less formal transactions.",
+                      "Transfers the seller's interest without making guarantees.",
                   },
                   {
                     title: "Grant Deed",
                     description:
-                      "Similar to a warranty deed but may not provide as much protection. It implies that the property has not been sold to anyone else.",
+                      "Similar to a warranty deed but may provide less protection.",
                   },
                   {
                     title: "Resort Deed",
                     description:
-                      "Selling a resort property involves a unique set of considerations compared to traditional real estate transactions. Whether you're a resort owner looking to sell or an investor interested in acquiring a leisure property, understanding the intricacies of resort sales is crucial.",
-                  },
-                  {
-                    title: "Financial Documentation",
-                    description:
-                      "Compile detailed financial records, including revenue, expenses, and profit margins. This documentation helps potential buyers assess the financial health of the resort.",
-                  },
-                  {
-                    title: "Property Valuation",
-                    description:
-                      "Work with real estate professionals experienced in the hospitality industry to determine the fair market value of the resort. Consider the property's amenities, location, and revenue-generating potential.",
-                  },
-                  {
-                    title: "Legal Compliance",
-                    description:
-                      "Ensure that all licenses, permits, and zoning regulations are up-to-date. Address any legal issues or concerns that might affect the sale.",
+                      "Selling a resort property involves unique considerations.",
                   },
                 ].map((item, index) => (
                   <div key={index}>
-                    <h3 className="text-white font-semibold mb-2 flex items-start gap-2">
-                      <span className="text-[#FF6B35] mt-1">•</span>
+                    <h3 className="text-[#BFBFBF] font-semibold text-sm sm:text-base mb-2 flex items-start gap-2">
+                      <span className="text-[#BFBFBF] mt-1">•</span>
                       <span>{item.title}</span>
                     </h3>
-                    <p className="text-gray-300 text-sm sm:text-base ml-6 leading-relaxed">{item.description}</p>
+                    <p className="text-gray-300 text-xs sm:text-sm ml-6 leading-relaxed">
+                      {item.description}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Right Column - Contact Form & Agent Info */}
+          {/* Right Column */}
           <div className="space-y-6">
-         
 
-            {/* Contact Form Component */}
+            {/* Contact Form */}
             <ContactForm />
 
-            {/* Contact Information Card */}
-            <div className="bg-[#1a2847] rounded-2xl p-6 sm:p-8">
-              <h3 className="text-white text-lg font-bold mb-4">Contact Information</h3>
+            {/* Agent Card */}
+            <div className="bg-white/10 p-4 sm:p-8 rounded-xl">
+              <h3 className="text-white text-base sm:text-lg font-bold mb-4">
+                Contact Information
+              </h3>
 
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#E55A24] flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">A</span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#E55A24] flex items-center justify-center">
+                  <span className="text-white font-bold text-base sm:text-lg">A</span>
                 </div>
                 <div>
-                  <h4 className="text-white font-semibold">Arlene McCoy</h4>
-                  <p className="text-gray-400 text-sm">Property Agent</p>
+                  <h4 className="text-white text-sm sm:text-base font-semibold">
+                    Arlene McCoy
+                  </h4>
+                  <p className="text-[#BFBFBF] text-xs sm:text-sm">Property Agent</p>
                 </div>
               </div>
 
-              {/* Contact Details */}
               <div className="space-y-3">
-                <a
-                  href="mailto:michelle.rivera@example.com"
-                  className="flex items-center gap-3 text-gray-300 hover:text-[#FF6B35] transition-colors"
-                >
-                  <Mail size={18} />
-                  <span className="text-sm">michelle.rivera@example.com</span>
+                <a href="#" className="flex items-center gap-2 text-gray-300 text-xs sm:text-sm">
+                  <Mail size={16} />
+                  michelle.rivera@example.com
                 </a>
-                <a
-                  href="tel:(509)5550103"
-                  className="flex items-center gap-3 text-gray-300 hover:text-[#FF6B35] transition-colors"
-                >
-                  <Phone size={18} />
-                  <span className="text-sm">(509) 555-0103</span>
+
+                <a href="#" className="flex items-center gap-2 text-gray-300 text-xs sm:text-sm">
+                  <Phone size={16} />
+                  (509) 555-0103
                 </a>
               </div>
             </div>
+
           </div>
+
         </div>
       </div>
     </div>
