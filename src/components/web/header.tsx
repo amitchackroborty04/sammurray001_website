@@ -22,7 +22,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-[72px] bg-[#070E28] border-b border-slate-800">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-0">
         <div className="flex justify-between items-center h-16">
 
           {/* Logo */}
@@ -57,14 +57,14 @@ export default function Header() {
           {/* Desktop Icons + Button */}
           <div className="hidden lg:flex items-center gap-0">
             <button className="p-2 hover:bg-slate-800 rounded-lg transition">
-              <MessageCircleMore className="text-white !w-10 !h-10" />
+              <MessageCircleMore className="text-white !w-7 !h-7" />
             </button>
             <button className="p-2 hover:bg-slate-800 rounded-lg transition relative">
-              <Heart className="text-white !w-10 !h-10" />
+              <Heart className="text-white !w-7 !h-7" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-cyan-400 rounded-full"></span>
             </button>
             <button className="p-2 hover:bg-slate-800 rounded-lg transition">
-              <CircleUserRound className="text-white !w-10 !h-10" />
+              <CircleUserRound className="text-white !w-7 !h-7" />
             </button>
 
             <Button className="bg-gradient hover:bg-gradient/80 h-[41px] px-6 text-white">
