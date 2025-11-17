@@ -9,7 +9,7 @@ export default function LoginRoute() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0f1929] to-[#1a2332]">
       <LoginPage
-        onSwitchToRegister={() => router.push("/register")}
+        onSwitchToRegister={() => router.push("/signup")}
         onSwitchToForgotPassword={() => router.push("/forgot-password")}
       />
     </main>

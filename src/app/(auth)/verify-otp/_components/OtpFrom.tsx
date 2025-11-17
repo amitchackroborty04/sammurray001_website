@@ -43,7 +43,7 @@ export default function OtpVerificationPage() {
     }
 
     return (
-        <AuthLayout imageSrc="/images/auth-side.png" imagePosition="right">
+        <AuthLayout imageSrc="/assets/sammu-auth-image.png" imagePosition="right">
             <div className="bg-[#FFFFFF33]/20 rounded-xl p-4 md:p-8 space-y-6 w-full lg:w-[550px]">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
