@@ -211,6 +211,7 @@ export default function FeaturedListings() {
             </p>
           </div>
         )}
+        
       </div>
     </section>
   );

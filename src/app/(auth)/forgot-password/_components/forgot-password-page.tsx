@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import AuthLayout from "../../_components/auth-layout"
-import ForgotPasswordForm from "./forgot-password-form"
+import { useState } from "react";
+import AuthLayout from "../../_components/auth-layout";
+import ForgotPasswordForm from "./forgot-password-form";
 
 interface ForgotPasswordPageProps {
-  onSwitchToLogin: () => void
+  onSwitchToLogin: () => void;
 }
 
 export default function ForgotPasswordPage({ onSwitchToLogin }: ForgotPasswordPageProps) {
-  const [currentStep, setCurrentStep] = useState<"email" | "otp" | "password">("email")
+  const [currentStep, setCurrentStep] = useState<"email" | "otp" | "password">("email");
 
-  const handleRoleAndEmail = () => {
-    setCurrentStep("otp")
-  }
+  const handleGoToOtp = () => {
+    setCurrentStep("otp");
+  };
 
   return (
-    <AuthLayout>
+    <AuthLayout imageSrc="/assets/sammu-auth-image.png" imagePosition="right">
       <div
         className="
           flex flex-col justify-center items-center
-          w-full min-h-screen
+          w-full
           px-4 sm:px-6 md:px-8
           bg-transparent
         "
@@ -37,12 +37,12 @@ export default function ForgotPasswordPage({ onSwitchToLogin }: ForgotPasswordPa
         >
           {currentStep === "email" && (
             <ForgotPasswordForm
-              onSubmit={handleRoleAndEmail}
+              onSubmitStep={handleGoToOtp} // ⭐ FIXED
               onBackToLogin={onSwitchToLogin}
             />
           )}
         </div>
       </div>
     </AuthLayout>
-  )
+  );
 }
