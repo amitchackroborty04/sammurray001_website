@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
+import AppProvider from "@/provider/AppProvider";
 
 // Google Fonts
 const montserrat = Montserrat({
@@ -29,12 +30,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${playfairDisplay.variable} antialiased`}>
+      <body
+        className={`${montserrat.variable} ${playfairDisplay.variable} antialiased`}
+      >
         {/* NextTopLoader with gradient */}
         <NextTopLoader color="#0078B8" height={3} showSpinner={false} />
-       
 
-        {children}
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );

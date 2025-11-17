@@ -12,7 +12,7 @@ interface SupplierStepTwoFormProps {
   onLoginClick: () => void
 }
 
-export default function SupplierStepTwoForm({
+export default function SupplierStepTwoForm({  
   onSubmit,
   onLoginClick,
 }: SupplierStepTwoFormProps) {
