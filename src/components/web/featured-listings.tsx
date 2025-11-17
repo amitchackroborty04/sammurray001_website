@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import ListingCard, { Listing } from "../Reuseable_cards/PropertiesCard";
 import { jwtDecode } from "jwt-decode";
+import { useSession } from "next-auth/react";
 
 // =======================
 // API Types (Full Safe)
@@ -67,18 +68,17 @@ const formatPrice = (price: number): string => {
 // =======================
 // Get Token
 // =======================
-const getAuthToken = (): string | null => {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("token") || localStorage.getItem("access_token");
-};
+
 
 // =======================
 // FeaturedListings Component
 // =======================
 export default function FeaturedListings() {
   // Decode token for subscription check
-  const token = getAuthToken();
+  const sesseion=useSession()
+  const token=sesseion.data?.user?.accessToken 
   let isSubscriber = false;
+
 
   if (token) {
     try {
@@ -211,7 +211,7 @@ export default function FeaturedListings() {
             </p>
           </div>
         )}
-        
+
       </div>
     </section>
   );

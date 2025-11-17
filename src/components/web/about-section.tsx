@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function AboutSection() {
   return (
@@ -30,10 +31,11 @@ export default function AboutSection() {
               Property Nexus is redefining how developers and businesses connect, bringing transparency, speed and
               smarter deal-making to the property market.
             </p>
-
+            <Link href="/about-us" >
             <Button className="bg-gradient hover:bg-gradient/95 h-[50px] sm:h-[55px] px-8 sm:px-[50px] text-white">
               Get Started →
             </Button>
+            </Link>
 
             <div className="grid grid-cols-2 gap-6 mt-8">
               <div>
