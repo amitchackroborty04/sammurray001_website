@@ -1,23 +1,70 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import type React from "react";
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface ForgotPasswordFormProps {
-  onSubmit: (role: "tenant" | "supplier") => void
-  onBackToLogin: () => void
+  onBackToLogin: () => void;
+  onSubmitStep: () => void; // ⭐ ADD THIS
 }
 
-export default function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // you can handle OTP send logic here
-  }
+interface ForgotPasswordFormData {
+  email: string;
+}
+
+export default function ForgotPasswordForm({
+  onBackToLogin,
+  onSubmitStep, // ⭐ RECEIVE IT
+}: ForgotPasswordFormProps) {
+  const router = useRouter();
+
+  const { register, handleSubmit } = useForm<ForgotPasswordFormData>();
+
+  const forgotPassMutation = useMutation({
+    mutationFn: async (bodyData: { email: string }) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/auth/forgot-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodyData),
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to send email");
+      }
+
+      return res.json();
+    },
+
+    onSuccess: (data, variables) => {
+      toast.success(data.message || "OTP sent successfully!");
+      const encodedEmail = encodeURIComponent(variables.email);
+
+      onSubmitStep(); // ⭐ MOVE TO OTP STEP
+
+      router.push(`/verify-otp?email=${encodedEmail}`);
+    },
+
+    onError: (err) => {
+      const message = err instanceof Error ? err.message : "Failed to send OTP";
+      toast.error(message);
+    },
+  });
+
+  const onSubmit = (data: ForgotPasswordFormData) => {
+    forgotPassMutation.mutate({ email: data.email });
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Header */}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <h2 className="text-[25px] font-bold mb-2 bg-gradient-to-r from-[#0078B8] to-[#229F99] text-transparent bg-clip-text">
           Forgot Password
@@ -27,20 +74,20 @@ export default function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordForm
         </p>
       </div>
 
-      {/* Email Input */}
       <div>
         <label className="block text-[#FFFFFF] text-base mb-2">Email Address</label>
         <Input
           type="email"
           placeholder="hello@example.com"
+          {...register("email", { required: true })}
           className="border-[#BFBFBF] text-white placeholder:text-[#BFBFBF] h-[46px] rounded-[4px]"
           required
         />
       </div>
 
-      {/* Submit Button */}
       <Button
         type="submit"
+        disabled={forgotPassMutation.isPending}
         className="w-full h-[46px] text-white font-semibold rounded-lg disabled:opacity-50 disabled:text-white"
         style={{
           background: `linear-gradient(90deg, #0078B8 0%, #229F99 101.35%), 
@@ -48,10 +95,9 @@ export default function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordForm
           backgroundBlendMode: "overlay",
         }}
       >
-        Send OTP
+        {forgotPassMutation.isPending ? "Sending..." : "Send OTP"}
       </Button>
 
-      {/* Back Link */}
       <button
         type="button"
         onClick={onBackToLogin}
@@ -60,5 +106,5 @@ export default function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordForm
         Back to Login
       </button>
     </form>
-  )
+  );
 }
