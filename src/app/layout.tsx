@@ -3,6 +3,7 @@ import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import AppProvider from "@/provider/AppProvider";
+import AuthProvider from "@/provider/AuthProvider";
 
 // Google Fonts
 const montserrat = Montserrat({
@@ -35,8 +36,9 @@ export default function RootLayout({
       >
         {/* NextTopLoader with gradient */}
         <NextTopLoader color="#0078B8" height={3} showSpinner={false} />
-
-        <AppProvider>{children}</AppProvider>
+        <AuthProvider>
+          <AppProvider>{children}</AppProvider>
+        </AuthProvider>
       </body>
     </html>
   );
