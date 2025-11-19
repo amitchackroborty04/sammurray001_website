@@ -6,6 +6,8 @@ import { MessageCircle, MapPin, Ruler, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { toast } from "sonner"; // Make sure you have sonner installed
+import { useSession } from "next-auth/react";
 
 export interface Listing {
   id: string;
@@ -26,6 +28,9 @@ interface ListingCardProps {
 }
 
 export default function ListingCard({ listing, isSubscriber }: ListingCardProps) {
+  const { data: session } = useSession();
+  const isLoggedIn = !!session;
+
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   // Initialize wishlist from localStorage
@@ -41,6 +46,11 @@ export default function ListingCard({ listing, isSubscriber }: ListingCardProps)
   const handleWishlistToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
+
+    if (!isLoggedIn) {
+      toast.error("Please login first");
+      return;
+    }
 
     const stored = localStorage.getItem("wishlist");
     let wishlist: Listing[] = stored ? JSON.parse(stored) : [];

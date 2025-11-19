@@ -6,6 +6,8 @@ import { MessageCircle, MapPin, Ruler } from "lucide-react";
 import Image from "next/image";
 
 export interface Listing {
+  //eslint-disable-next-line
+  [x: string]: any;
   id: string;
   image?: string;
   type: string;

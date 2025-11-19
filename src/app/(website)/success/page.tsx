@@ -5,11 +5,11 @@ import Link from 'next/link';
 
 export default function PaymentSuccess() {
   return (
-    <div className="min-h-screen  flex items-center justify-center px-6">
-      <div className="max-w-2xl w-full text-center">
+    <div className=" flex items-center py-14 justify-center px-6">
+      <div className="max-w-2xl w-full text-center ">
 
         {/* Big Success Icon */}
-        <div className="mb-10 animate-bounce">
+        <div className="mb-10 animate-bounce ">
           <div className="inline-flex items-center justify-center w-32 h-32 bg-green-500/20 rounded-full ring-8 ring-green-500/10">
             <CheckCircle className="w-20 h-20 text-green-400" />
           </div>
@@ -22,7 +22,7 @@ export default function PaymentSuccess() {
 
      
 
-        <p className="text-xl text-gray-300 mb-12">
+        <p className="text-xl text-gray-300 mb-8">
           Your account is now upgraded. Enjoy unlimited access!
         </p>
 
@@ -38,14 +38,7 @@ export default function PaymentSuccess() {
           </Link>
         </div>
 
-        {/* Fun Footer */}
-        <div className="mt-16 text-gray-400">
-          <p className="text-sm">
-            Thank you for your trust
-            <span className="text-2xl mx-2">❤️</span>
-            See you inside!
-          </p>
-        </div>
+      
       </div>
     </div>
   );
