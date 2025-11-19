@@ -220,7 +220,7 @@ export default function FindSpacePage() {
 
         {/* Search Button */}
         <div className="flex items-end">
-          <Button onClick={() => handleSearch()} className="w-full h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-semibold">
+          <Button onClick={() => handleSearch()} className="w-full h-12 bg-gradient hover:gradient/90 hover:to-pink-700 font-semibold">
             Search Properties
           </Button>
         </div>
