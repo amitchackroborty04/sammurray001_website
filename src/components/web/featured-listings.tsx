@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -6,31 +8,20 @@ import { jwtDecode } from "jwt-decode";
 import { useSession } from "next-auth/react";
 
 // =======================
-// API Types (Full Safe)
+// API Types
 // =======================
 interface ApiProperty {
   _id: string;
   type: { name: string };
-
   title: string;
   price: number;
   address: string;
   city: string;
   country: string;
   thumble: string;
-
   description?: string;
   size?: string;
   areaya?: string;
-  mounth?: string;
-  user?: string;
-  bookingUser?: string[];
-  extraLocation?: {
-    type: string;
-    coordinates: number[];
-  };
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 interface ApiResponse {
@@ -66,51 +57,36 @@ const formatPrice = (price: number): string => {
 };
 
 // =======================
-// Get Token
-// =======================
-
-
-// =======================
 // FeaturedListings Component
 // =======================
 export default function FeaturedListings() {
-  // Decode token for subscription check
-  const sesseion=useSession()
-  const token=sesseion.data?.user?.accessToken 
+  const session = useSession();
+  const token = session.data?.user?.accessToken || "";
   let isSubscriber = false;
-
 
   if (token) {
     try {
       const decoded: DecodedToken = jwtDecode(token);
-      isSubscriber = decoded.isSubscription === true;
+      isSubscriber = decoded.isSubscription;
     } catch (error) {
       console.error("Invalid token:", error);
     }
   }
 
-  // Fetch API
   const { data: response, isLoading, isError } = useQuery<ApiResponse>({
-    queryKey: ["featured-properties"],
+    queryKey: ["featured-properties", token],
     queryFn: async () => {
-      const token = process.env.NEXT_PUBLIC_TOKEN;
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL || ""}/property/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/property/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
 
       if (!res.ok) {
         const errorText = await res.text();
-        throw new Error(
-          `Failed to fetch properties: ${res.status} ${errorText}`
-        );
+        throw new Error(`Failed to fetch properties: ${res.status} ${errorText}`);
       }
 
       return res.json();
@@ -119,7 +95,6 @@ export default function FeaturedListings() {
     retry: 1,
   });
 
-  // Transform data → ListingCard format
   const listings: Listing[] =
     response?.data.map((property): Listing => ({
       id: property._id,
@@ -131,12 +106,9 @@ export default function FeaturedListings() {
       area: property.size || "N/A",
       title: property.title,
       description: property.description || "No description available",
-      location: property.areaya
-        ? `${property.areaya}, ${property.city}`
-        : property.city,
+      location: property.areaya ? `${property.areaya}, ${property.city}` : property.city,
     })) || [];
 
-  // Skeleton UI
   const SkeletonCard = () => (
     <div className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-gray-700 transition-all duration-300 group">
       <div className="relative">
@@ -151,14 +123,11 @@ export default function FeaturedListings() {
           <div className="h-6 bg-gray-700 rounded w-32 animate-pulse" />
           <div className="h-8 bg-gray-700 rounded w-36 animate-pulse" />
         </div>
-
         <div className="h-8 bg-gray-700 rounded w-11/12 animate-pulse" />
-
         <div className="space-y-2">
           <div className="h-4 bg-gray-800 rounded w-full animate-pulse" />
           <div className="h-4 bg-gray-800 rounded w-4/5 animate-pulse" />
         </div>
-
         <div className="flex justify-between items-center pt-2">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 bg-gray-700 rounded animate-pulse" />
@@ -190,28 +159,19 @@ export default function FeaturedListings() {
           </div>
         ) : isError ? (
           <div className="text-center py-16">
-            <p className="text-red-400 text-lg">
-              Failed to load properties. Please try again later.
-            </p>
+            <p className="text-red-400 text-lg">Failed to load properties. Please try again later.</p>
           </div>
         ) : listings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             {listings.map((listing) => (
-              <ListingCard
-                key={listing.id}
-                listing={listing}
-                isSubscriber={isSubscriber}
-              />
+              <ListingCard key={listing.id} listing={listing} isSubscriber={isSubscriber} />
             ))}
           </div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-gray-400 text-lg">
-              No featured properties available at the moment.
-            </p>
+            <p className="text-gray-400 text-lg">No featured properties available at the moment.</p>
           </div>
         )}
-
       </div>
     </section>
   );

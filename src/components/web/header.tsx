@@ -80,7 +80,7 @@ export default function Header() {
                 alt="Logo" 
                 width={100} 
                 height={100} 
-                className=" w-[100px] lg:w-[141px] h-[80px] lg:h-[141px] "
+                className=" w-[100px] lg:w-[141px] h-[80px] lg:h-[70px]  object-cover"
               />
             </Link>
 

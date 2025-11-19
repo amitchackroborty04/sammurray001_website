@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -6,31 +8,20 @@ import { jwtDecode } from "jwt-decode";
 import { useSession } from "next-auth/react";
 
 // =======================
-// API Types (Full Safe)
+// API Types
 // =======================
 interface ApiProperty {
   _id: string;
   type: { name: string };
-
   title: string;
   price: number;
   address: string;
   city: string;
   country: string;
   thumble: string;
-
   description?: string;
   size?: string;
   areaya?: string;
-  mounth?: string;
-  user?: string;
-  bookingUser?: string[];
-  extraLocation?: {
-    type: string;
-    coordinates: number[];
-  };
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 interface ApiResponse {
@@ -56,61 +47,45 @@ interface DecodedToken {
 // =======================
 // Format Price
 // =======================
-const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat("en-US", {
+const formatPrice = (price: number): string =>
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
-};
 
 // =======================
-// Get Token
-// =======================
-
-
-// =======================
-// FeaturedListings Component
+// BrowseProperties Component
 // =======================
 export default function BrowseProperties() {
-  // Decode token for subscription check
-  const sesseion=useSession()
-  const token=sesseion.data?.user?.accessToken 
+  const session = useSession();
+  const token = session.data?.user?.accessToken || "";
   let isSubscriber = false;
-
 
   if (token) {
     try {
       const decoded: DecodedToken = jwtDecode(token);
-      isSubscriber = decoded.isSubscription === true;
+      isSubscriber = decoded.isSubscription;
     } catch (error) {
       console.error("Invalid token:", error);
     }
   }
 
-  // Fetch API
   const { data: response, isLoading, isError } = useQuery<ApiResponse>({
-    queryKey: ["featured-properties"],
+    queryKey: ["browse-properties", token],
     queryFn: async () => {
-      const token = process.env.NEXT_PUBLIC_TOKEN;
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL || ""}/property/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/property/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
 
       if (!res.ok) {
         const errorText = await res.text();
-        throw new Error(
-          `Failed to fetch properties: ${res.status} ${errorText}`
-        );
+        throw new Error(`Failed to fetch properties: ${res.status} ${errorText}`);
       }
 
       return res.json();
@@ -119,7 +94,6 @@ export default function BrowseProperties() {
     retry: 1,
   });
 
-  // Transform data → ListingCard format
   const listings: Listing[] =
     response?.data.map((property): Listing => ({
       id: property._id,
@@ -131,12 +105,9 @@ export default function BrowseProperties() {
       area: property.size || "N/A",
       title: property.title,
       description: property.description || "No description available",
-      location: property.areaya
-        ? `${property.areaya}, ${property.city}`
-        : property.city,
+      location: property.areaya ? `${property.areaya}, ${property.city}` : property.city,
     })) || [];
 
-  // Skeleton UI
   const SkeletonCard = () => (
     <div className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-gray-700 transition-all duration-300 group">
       <div className="relative">
@@ -178,7 +149,7 @@ export default function BrowseProperties() {
             Latest Listings
           </p>
           <h1 className="text-[22px] md:text-4xl font-bold text-white">
-          Browse all available properties and opportunities
+            Browse all available properties and opportunities
           </h1>
         </div>
 
@@ -196,22 +167,17 @@ export default function BrowseProperties() {
           </div>
         ) : listings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            {listings.slice(0, 4).map((listing) => (
-              <ListingCard
-                key={listing.id}
-                listing={listing}
-                isSubscriber={isSubscriber}
-              />
+            {listings.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} isSubscriber={isSubscriber} />
             ))}
           </div>
         ) : (
           <div className="text-center py-16">
             <p className="text-gray-400 text-lg">
-              No featured properties available at the moment.
+              No properties available at the moment.
             </p>
           </div>
         )}
-
       </div>
     </section>
   );
