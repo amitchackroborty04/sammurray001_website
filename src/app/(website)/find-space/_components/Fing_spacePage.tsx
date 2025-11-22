@@ -80,7 +80,7 @@ export default function FindSpacePage() {
   let isSubscriber = false;
   if (token) {
     try {
-      const decoded: DecodedToken = jwtDecode (token);
+      const decoded: DecodedToken = jwtDecode(token);
       isSubscriber = decoded.isSubscription;
     } catch (err) {
       console.error("Token decode failed", err);
@@ -147,19 +147,22 @@ export default function FindSpacePage() {
   );
 
   // Pre-fill from URL params
-  useEffect(() => {
-    if (!data?.data || !searchParams) return;
+ useEffect(() => {
+  if (!data?.data) return;
 
-    const keyword = searchParams.get("keyword") || "";
-    const city = searchParams.get("city") || "all";
-    const typeParam = searchParams.get("type") || "all";
+  const keyword = searchParams.get("keyword") || "";
+  const city = searchParams.get("city") || "all";
+  const typeParam = searchParams.get("type") || "all";
 
-    setSearch(keyword);
-    setLocation(city);
-    setType(typeParam);
+  setSearch(keyword);
+  setLocation(city);
+  setType(typeParam);
 
-    handleSearch({ search: keyword, location: city, type: typeParam });
-  }, [data, searchParams, handleSearch]);
+  handleSearch({ search: keyword, location: city, type: typeParam });
+
+// 👇 শুধু data আসলে একবার run হবে
+}, [data]);
+
 
   return (
     <section className="container mx-auto py-10 px-4">
@@ -220,9 +223,13 @@ export default function FindSpacePage() {
 
         {/* Search Button */}
         <div className="flex items-end">
-          <Button onClick={() => handleSearch()} className="w-full h-12 bg-gradient hover:gradient/90 hover:to-pink-700 font-semibold">
+          <Button
+            onClick={() => handleSearch({ search, location, type })}
+            className="w-full h-12 bg-gradient hover:gradient/90"
+          >
             Search Properties
           </Button>
+
         </div>
       </div>
 
