@@ -5,6 +5,7 @@ import { User, Lock, History, Heart, LogOut } from "lucide-react";
 import Image from "next/image";
 import ProfilePage from "./ProfilePage";
 import ChangePassword from "./ChangePassword";
+import WishlistPage from "./WishlistPage";
 
 // ---------------- Tabs Components ----------------
 
@@ -102,7 +103,7 @@ const ProfileLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState("change-password");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+    <div className="min-h-screen text-white p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -114,7 +115,7 @@ const ProfileLayout: React.FC = () => {
         <div className="flex gap-8">
           {/* Sidebar */}
           <div className="w-80">
-            <div className="bg-slate-800/50 rounded-2xl p-6 backdrop-blur-sm border border-slate-700">
+            <div className=" rounded-2xl p-6 backdrop-blur-sm border border-slate-700">
               {/* Profile Image and Info */}
               <div className="text-center mb-8">
                 <div className="relative inline-block mb-4">
@@ -175,10 +176,7 @@ const ProfileLayout: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="watchlists" activeTab={activeTab}>
-              <div className="bg-slate-800/50 rounded-2xl p-8 backdrop-blur-sm border border-slate-700">
-                <h2 className="text-2xl font-bold mb-4">Watchlists</h2>
-                <p>Here you can show any custom text for Watchlists.</p>
-              </div>
+              <WishlistPage />
             </TabsContent>
           </div>
         </div>
