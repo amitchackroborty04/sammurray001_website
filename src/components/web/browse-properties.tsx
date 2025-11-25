@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import ListingCard, { Listing } from "../Reuseable_cards/PropertiesCard";
 import { jwtDecode } from "jwt-decode";
 import { useSession } from "next-auth/react";
+import { useApp } from "@/lib/AppContext";
 
 // =======================
 // API Types
@@ -43,6 +44,10 @@ interface DecodedToken {
   iat: number;
   exp: number;
 }
+interface contexporops{
+  isSubscription: boolean;
+  activeInactiveSubcrib: string
+}
 
 // =======================
 // Format Price
@@ -60,17 +65,18 @@ const formatPrice = (price: number): string =>
 // =======================
 export default function BrowseProperties() {
   const session = useSession();
+   const { user} = useApp();
   const token = session.data?.user?.accessToken || "";
-  let isSubscriber = false;
+  // let isSubscriber = false;
 
-  if (token) {
-    try {
-      const decoded: DecodedToken = jwtDecode(token);
-      isSubscriber = decoded.isSubscription;
-    } catch (error) {
-      console.error("Invalid token:", error);
-    }
-  }
+  // if (token) {
+  //   try {
+  //     const decoded: DecodedToken = jwtDecode(token);
+  //     isSubscriber = decoded.isSubscription;
+  //   } catch (error) {
+  //     console.error("Invalid token:", error);
+  //   }
+  // }
 
   const { data: response, isLoading, isError } = useQuery<ApiResponse>({
     queryKey: ["browse-properties", token],
@@ -168,7 +174,7 @@ export default function BrowseProperties() {
         ) : listings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             {listings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} isSubscriber={isSubscriber} />
+              <ListingCard key={listing.id} listing={listing}isSubscriber={user as contexporops} />
             ))}
           </div>
         ) : (

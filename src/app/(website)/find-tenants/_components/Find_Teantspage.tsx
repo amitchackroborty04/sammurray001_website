@@ -6,7 +6,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import TenantsCard, { Listing } from "./Tenants_Card";
-import { jwtDecode } from "jwt-decode";
 import SkeletonCard from "./SkeletonCard";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
@@ -52,6 +51,7 @@ interface TokenPayload {
 const Find_Teantspage: React.FC = () => {
   const { data: session } = useSession();
   const token = session?.user?.accessToken || null;
+ 
 
   // Filter States
   const [search, setSearch] = useState("");
@@ -59,15 +59,15 @@ const Find_Teantspage: React.FC = () => {
   const [type, setType] = useState("all");
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
 
-  let isSubscription = false;
-  if (token) {
-    try {
-      const decoded: TokenPayload = jwtDecode(token);
-      isSubscription = decoded.isSubscription || false;
-    } catch (err) {
-      console.error("Invalid token :", err);
-    }
-  }
+  // let isSubscription = false;
+  // if (token) {
+  //   try {
+  //     const decoded: TokenPayload = jwtDecode(token);
+  //     isSubscription = decoded.isSubscription || false;
+  //   } catch (err) {
+  //     console.error("Invalid token :", err);
+  //   }
+  // }
 
   // Fetch listings
   const fetchListings = async (): Promise<Listing[]> => {
@@ -92,12 +92,7 @@ const Find_Teantspage: React.FC = () => {
       description: item.description || "No description available",
       location: `${item.city || ""}, ${item.country || ""}`.trim() || "Location not specified",
       number: item.number || "",
-      extraData: isSubscription
-        ? {
-            month: item.mounth || item.month || "",
-            extraLocation: item.extraLocation || item.extaraLocation || "",
-          }
-        : undefined,
+    
     }));
   };
 
@@ -219,7 +214,7 @@ const Find_Teantspage: React.FC = () => {
       </div>
 
       {/* Listings Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {isLoading ? (
           Array(6)
             .fill(0)
@@ -233,7 +228,7 @@ const Find_Teantspage: React.FC = () => {
             <TenantsCard
               key={listing.id}
               listing={listing}
-              showFullCard={!!token && isSubscription}
+              showFullCard={!!token }
             />
           ))
         )}

@@ -16,6 +16,7 @@ import {
 import ListingCard, { Listing } from "@/components/Reuseable_cards/PropertiesCard";
 import { useSession } from "next-auth/react";
 import { jwtDecode } from "jwt-decode";
+import { useApp } from "@/lib/AppContext";
 
 interface ApiProperty {
   _id: string;
@@ -36,14 +37,18 @@ interface ApiResponse {
   data: ApiProperty[];
 }
 
-interface DecodedToken {
-  id: string;
-  email: string;
-  role: string;
+// interface DecodedToken {
+//   id: string;
+//   email: string;
+//   role: string;
+//   isSubscription: boolean;
+//   subscriptionExpiry: string;
+//   iat: number;
+//   exp: number;
+// }
+interface contexporops{
   isSubscription: boolean;
-  subscriptionExpiry: string;
-  iat: number;
-  exp: number;
+  activeInactiveSubcrib: string
 }
 
 const formatPrice = (price: number): string =>
@@ -69,6 +74,7 @@ const SkeletonCard = () => (
 
 export default function FindSpacePage() {
   const searchParams = useSearchParams();
+   const { user} = useApp();
   const session = useSession();
   const token = session.data?.user?.accessToken || "";
 
@@ -77,15 +83,15 @@ export default function FindSpacePage() {
   const [type, setType] = useState("all");
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
 
-  let isSubscriber = false;
-  if (token) {
-    try {
-      const decoded: DecodedToken = jwtDecode(token);
-      isSubscriber = decoded.isSubscription;
-    } catch (err) {
-      console.error("Token decode failed", err);
-    }
-  }
+  // let isSubscriber = false;
+  // if (token) {
+  //   try {
+  //     const decoded: DecodedToken = jwtDecode(token);
+  //     isSubscriber = decoded.isSubscription;
+  //   } catch (err) {
+  //     console.error("Token decode failed", err);
+  //   }
+  // }
 
   // Fetch properties
   const { data, isLoading, isError } = useQuery<ApiResponse>({
@@ -244,7 +250,7 @@ export default function FindSpacePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {filteredListings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} isSubscriber={isSubscriber} />
+              <ListingCard key={listing.id} listing={listing} isSubscriber={user as contexporops} />
             ))}
           </div>
         )}
