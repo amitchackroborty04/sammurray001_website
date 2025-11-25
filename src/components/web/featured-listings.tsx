@@ -4,7 +4,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import ListingCard, { Listing } from "../Reuseable_cards/PropertiesCard";
-import { jwtDecode } from "jwt-decode";
 import { useSession } from "next-auth/react";
 import { useApp } from "@/lib/AppContext";
 
@@ -32,18 +31,7 @@ interface ApiResponse {
   data: ApiProperty[];
 }
 
-// =======================
-// Token Decode Type
-// =======================
-interface DecodedToken {
-  id: string;
-  role: string;
-  email: string;
-  isSubscription: boolean;
-  subscriptionExpiry: string;
-  iat: number;
-  exp: number;
-}
+
 
 interface contexporops{
   isSubscription: boolean;
@@ -107,6 +95,7 @@ export default function FeaturedListings() {
   const listings: Listing[] =
     response?.data.map((property): Listing => ({
       id: property._id,
+      user: property._id || "", // ✅ এখানে যোগ করো
       image: property.thumble || "/assets/fallback-image.png",
       type: property.type?.name || "Unknown",
       badge: "Top pick",

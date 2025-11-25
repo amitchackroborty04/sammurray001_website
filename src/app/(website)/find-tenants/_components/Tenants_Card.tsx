@@ -122,6 +122,7 @@ import Image from "next/image";
 import { useApp } from "@/lib/AppContext";
 
 export interface Listing {
+  //eslint-disable-next-line
   [x: string]: any;
   id: string;
   image?: string;
@@ -136,6 +137,7 @@ export interface Listing {
   number: string;
   extraData?: {
     month?: string;
+    //eslint-disable-next-line
     extraLocation?: any;
   };
 }

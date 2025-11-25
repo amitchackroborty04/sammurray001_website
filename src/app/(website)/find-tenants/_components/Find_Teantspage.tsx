@@ -41,13 +41,6 @@ interface ListingData {
   extaraLocation?: string;
 }
 
-interface TokenPayload {
-  id: string;
-  role: string;
-  email: string;
-  isSubscription: boolean;
-}
-
 const Find_Teantspage: React.FC = () => {
   const { data: session } = useSession();
   const token = session?.user?.accessToken || null;
