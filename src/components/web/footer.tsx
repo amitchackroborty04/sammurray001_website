@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { useApp } from "@/lib/AppContext"
 import { Facebook, Instagram, Dribbble, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -63,6 +64,7 @@ function TermsModal({
 
 export default function Footer() {
   const pathname = usePathname()
+  const { user } = useApp()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(true)
@@ -79,7 +81,6 @@ export default function Footer() {
     { name: "Home", href: "/" },
     { name: "Find Space", href: "/find-space" },
     { name: "Find Tenants", href: "/find-tenants" },
-    { name: "pricing", href: "/pricing" },
     { name: "Pricing", href: "/pricing" },
     { name: "About Us", href: "/about-us" },
     { name: "Terms & Conditions", href: "/terms" },
@@ -102,7 +103,13 @@ export default function Footer() {
                 </h1>
               </div>
 
-              <Button className="bg-gradient hover:bg-gradient/95 h-[48px] md:h-[56px] px-8 md:px-[50px] text-white text-sm md:text-base">
+              <Button
+                className={`${
+                 
+                  "!bg-gradient hover:bg-gradient/95"
+                } h-[48px] md:h-[56px] px-8 md:px-[50px] text-white text-sm md:text-base`}
+                
+              >
                 Let&apos;s talk →
               </Button>
             </div>
@@ -135,6 +142,33 @@ export default function Footer() {
                   <nav className="grid grid-cols-2 md:grid-cols-1 gap-2">
                     {quickLinks.map((item) => {
                       const isActive = pathname === item.href
+
+                      // Handle Pricing link based on subscription
+                      if (item.name.toLowerCase() === "pricing") {
+                        const isSubscribedActive = user?.activeInactiveSubcrib === "active"
+
+                        return isSubscribedActive ? (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className={`
+                              text-sm md:text-[17px] block px-1 py-1 transition 
+                              ${isActive ? "text-gradient font-semibold" : "text-[#C5C5C5] hover:text-cyan-400"}
+                            `}
+                          >
+                            {item.name}
+                          </Link>
+                        ) : (
+                          <span
+                            key={item.name}
+                            className="text-sm md:text-[17px] block px-1 py-1 text-gray-500 cursor-not-allowed"
+                            title="Subscription inactive"
+                          >
+                            {item.name}
+                          </span>
+                        )
+                      }
+
                       return (
                         <Link
                           key={item.name}
