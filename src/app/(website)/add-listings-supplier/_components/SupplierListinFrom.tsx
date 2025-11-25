@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface SupplierListingFormData {
   propertyName: string
@@ -32,18 +33,30 @@ interface SupplierListingFormData {
   indicativeRentFrom: string
   month: string
   description: string
+  supplierIdCreateIdAgent?: string
+  managedByThisAgency?: boolean
 }
+
 interface PropertyType {
-  name: string,
+  name: string
   _id: string
 }
 
+interface Supplier {
+  _id: string
+  supplierId: {
+    _id: string
+    fullName: string
+  }
+}
+
 export function SupplierListingForm() {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const token = session?.user?.accessToken as string | undefined
+  const role = session?.user?.role
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
-  const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null) 
+  const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null)
   const [isMapOpen, setIsMapOpen] = useState(false)
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
 
@@ -51,6 +64,7 @@ export function SupplierListingForm() {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
     reset,
   } = useForm<SupplierListingFormData>({
@@ -65,12 +79,12 @@ export function SupplierListingForm() {
       indicativeRentFrom: '',
       month: '',
       description: '',
+      supplierIdCreateIdAgent: '',
+      managedByThisAgency: false,
     },
   })
 
- 
-
-  // Fetch Property Types
+  // FETCH PROPERTY TYPES
   const { data: propertyTypes = [], isLoading: isPropertyTypesLoading } = useQuery({
     queryKey: ['propertyTypes'],
     queryFn: async () => {
@@ -81,24 +95,35 @@ export function SupplierListingForm() {
     },
   })
 
-  // Submit Mutation - Using FormData (Exactly like Postman)
+  // FETCH SUPPLIERS (ONLY FOR AGENT)
+  const { data: suppliers = [], isLoading: isSuppliersLoading } = useQuery({
+    enabled: role === 'AGENT',
+    queryKey: ['suppliers'],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/hire-agent/supplier`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if (!res.ok) throw new Error('Failed to fetch suppliers')
+      const json = await res.json()
+      return json.data || []
+    },
+  })
+
+  // SUBMIT MUTATION
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/property`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          // Do NOT set Content-Type — let browser set multipart boundary
         },
         body: formData,
       })
 
       const result = await res.json()
-
-      if (!res.ok) {
-        throw new Error(result.message || 'Failed to add listing')
-      }
-
+      if (!res.ok) throw new Error(result.message || 'Failed to add listing')
       return result
     },
     onSuccess: (data) => {
@@ -108,27 +133,19 @@ export function SupplierListingForm() {
       setUploadedImageFile(null)
       setSelectedLocation(null)
     },
-    //eslint-disable-next-line
     onError: (error: any) => {
       toast.error(error.message || 'Upload failed. Please try again.')
     },
   })
 
+  // SUBMIT FUNCTION
   const onSubmit = (data: SupplierListingFormData) => {
-    if (status === 'loading') {
-      toast.error('Authentication loading...')
-      return
-    }
-
-    if (!token) {
-      toast.error('You must be logged in!')
-      return
-    }
+    if (!token) return toast.error('You must be logged in!')
 
     const formData = new FormData()
 
-    // Build clean payload
-    const payload = {
+    // Base payload
+    const payload: any = {
       type: data.propertyType,
       title: data.propertyName,
       description: data.description || undefined,
@@ -147,23 +164,29 @@ export function SupplierListingForm() {
         : undefined,
     }
 
+    // Add AGENT-specific fields only if role is AGENT
+    if (role === 'AGENT') {
+      if (data.supplierIdCreateIdAgent)
+        payload.supplyerIdCreateIdAgent = data.supplierIdCreateIdAgent
+
+      payload.managedByThisAgency = !!data.managedByThisAgency
+    }
+
     // Remove undefined fields
     const cleanPayload = Object.fromEntries(
-      Object.entries(payload).filter(([ v]) => v !== undefined)
+      Object.entries(payload).filter(([, v]) => v !== undefined)
     )
 
-    // Append as JSON string under "data" key
     formData.append('data', JSON.stringify(cleanPayload))
 
-    // Append image file if exists
     if (uploadedImageFile) {
       formData.append('thumble', uploadedImageFile, uploadedImageFile.name)
     }
 
-    console.log('FormData sent:', formData)
     mutation.mutate(formData)
   }
 
+  // IMAGE UPLOAD
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -174,100 +197,140 @@ export function SupplierListingForm() {
     }
 
     setUploadedImageFile(file)
-
     const reader = new FileReader()
-    reader.onload = (ev) => {
-      setUploadedImage(ev.target?.result as string)
-    }
+    reader.onload = (ev) => setUploadedImage(ev.target?.result as string)
     reader.readAsDataURL(file)
-
-    toast.success('Image selected – ready to upload!')
-  }
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2745] to-[#0a1428]">
-        <p className="text-white text-xl">Loading session...</p>
-      </div>
-    )
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1a2745] via-[#0f1f3f] to-[#0a1428] p-4 md:p-8">
-      <div className="mx-auto container ">
-         
-          <div className=" text-center pb-10">
-            <div>
-            <h1 className="text-4xl font-bold text-white md:text-5xl">
-              Add Your Property
-            </h1>
-            <p className="mt-2 text-gray-400">
-             Share your property with thousands of potential tenants
-            </p>
-            </div>
-          </div>
-      
-        <Card className="border-none bg-white/10  backdrop-blur-lg p-6 md:p-10 shadow-2xl">
-         
+      <div className="mx-auto container">
+        <div className="text-center pb-10">
+          <h1 className="text-4xl font-bold text-white md:text-5xl">Add Your Property</h1>
+          <p className="mt-2 text-gray-400">
+            Share your property with thousands of potential tenants
+          </p>
+        </div>
 
+        <Card className="border-none bg-white/10 backdrop-blur-lg p-6 md:p-10 shadow-2xl">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
 
-            {/* Property Name */}
+            {/* PROPERTY NAME */}
             <div>
-              <label className="text-sm font-semibold text-white mb-2 block">Property Name *</label>
+              <label className="text-sm font-semibold text-white mb-2 block">
+                Property Name *
+              </label>
               <Input
                 {...register('propertyName', { required: 'Required' })}
                 placeholder="Property Name"
-                className="h-12  border border-[#BFBFBF] text-white placeholder-gray-400"
+                className="h-12 border border-[#BFBFBF] text-white placeholder-gray-400"
               />
-              {errors.propertyName && <p className="text-red-400 text-xs mt-1">{errors.propertyName.message}</p>}
+              {errors.propertyName &&
+                <p className="text-red-400 text-xs mt-1">{errors.propertyName.message}</p>}
             </div>
 
-            {/* Country & City */}
+            {/* COUNTRY & CITY */}
             <div className="grid gap-6 md:grid-cols-2">
               <div>
                 <label className="text-sm font-semibold text-white mb-2 block">Country</label>
-                <Input {...register('country')} className="h-12  border border-[#BFBFBF] text-white" placeholder="Country" />
+                <Input {...register('country')} className="h-12 text-white" placeholder="Country" />
               </div>
               <div>
                 <label className="text-sm font-semibold text-white mb-2 block">City</label>
-                <Input {...register('city')} className="h-12  border border-[#BFBFBF] text-white"  placeholder="City"/>
+                <Input {...register('city')} className="h-12 text-white" placeholder="City" />
               </div>
             </div>
 
-            {/* Property Type & Area */}
+            {/* AGENT FIELDS */}
+            {role === 'AGENT' && (
+              <>
+                <div>
+                  <label className="text-sm font-semibold text-white mb-2 block">Supplier *</label>
+                  <Select
+                    onValueChange={(val) => setValue('supplierIdCreateIdAgent', val)}
+                    disabled={isSuppliersLoading}
+                  >
+                    <SelectTrigger className="h-12 border text-white">
+                      <SelectValue placeholder="Select Supplier" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {suppliers.map((sup: Supplier) => (
+                        <SelectItem key={sup._id} value={sup.supplierId._id}>
+                          {sup.supplierId.fullName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* FIXED CHECKBOX */}
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={!!watch("managedByThisAgency")}
+                    onCheckedChange={(val) => setValue("managedByThisAgency", val === true)}
+                  />
+                  <label className="text-white text-sm">Managed By This Agency</label>
+                </div>
+              </>
+            )}
+
+            {/* PROPERTY TYPE & AREA */}
             <div className="grid gap-6 md:grid-cols-2">
               <div>
                 <label className="text-sm font-semibold text-white mb-2 block">Property Type *</label>
-                <Select onValueChange={(val) => setValue('propertyType', val)} disabled={isPropertyTypesLoading}>
-                  <SelectTrigger className="h-12  border border-[#BFBFBF] text-white">
-                    <SelectValue placeholder={isPropertyTypesLoading ? 'Loading...' : 'Select Type'} />
+                <Select
+                  onValueChange={(val) => setValue('propertyType', val)}
+                  disabled={isPropertyTypesLoading}
+                >
+                  <SelectTrigger className="h-12 border text-white">
+                    <SelectValue placeholder="Select Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    
                     {propertyTypes.map((type: PropertyType) => (
-                      <SelectItem key={type._id} value={type._id}>{type.name}</SelectItem>
+                      <SelectItem key={type._id} value={type._id}>
+                        {type.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
+
               <div>
                 <label className="text-sm font-semibold text-white mb-2 block">Area / Suburb</label>
-                <Input {...register('areaSuburb')} placeholder="Area / Suburb" className="h-12  border border-[#BFBFBF] text-white" />
+                <Input
+                  {...register('areaSuburb')}
+                  placeholder="Area / Suburb"
+                  className="h-12 text-white"
+                />
               </div>
             </div>
 
-            {/* Address & Map */}
+            {/* ADDRESS & MAP */}
             <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <label className="text-sm font-semibold text-white mb-2 block">Exact Address (Optional)</label>
-                <Input {...register('exactAddress')} placeholder="Exact Address" className="h-12  border border-[#BFBFBF] text-white" />
+                <label className="text-sm font-semibold text-white mb-2 block">
+                  Exact Address (Optional)
+                </label>
+                <Input
+                  {...register('exactAddress')}
+                  placeholder="Exact Address"
+                  className="h-12 text-white"
+                />
               </div>
+
               <div>
-                <label className="text-sm font-semibold text-white mb-2 block">Location on Map</label>
-                <Button type="button" className="w-full h-12 bg-gradient hover:bg-gradient/80" onClick={() => setIsMapOpen(true)}>
+                <label className="text-sm font-semibold text-white mb-2 block">
+                  Location on Map
+                </label>
+
+                <Button
+                  type="button"
+                  className="w-full h-12 bg-gradient"
+                  onClick={() => setIsMapOpen(true)}
+                >
                   {selectedLocation ? 'Change Location' : 'Pick Location'}
                 </Button>
+
                 {selectedLocation && (
                   <p className="mt-2 text-green-400 text-xs">
                     Selected: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
@@ -276,47 +339,77 @@ export function SupplierListingForm() {
               </div>
             </div>
 
-            {/* Size & Rent */}
+            {/* SIZE & RENT */}
             <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <label className="text-sm font-semibold text-white mb-2 block">Size (sqft)</label>
-                <Input {...register('approxSize')} placeholder="size" className="h-12  border border-[#BFBFBF] text-white" />
+                <label className="text-sm font-semibold text-white mb-2 block">
+                  Size (sqft)
+                </label>
+                <Input
+                  {...register('approxSize')}
+                  placeholder="size"
+                  className="h-12 text-white"
+                />
               </div>
+
               <div>
-                <label className="text-sm font-semibold text-white mb-2 block">Monthly Rent (BDT)</label>
-                <Input {...register('indicativeRentFrom')} type="number" placeholder="Monthly Rent" className="h-12  border border-[#BFBFBF] text-white" />
+                <label className="text-sm font-semibold text-white mb-2 block">
+                  Monthly Rent (BDT)
+                </label>
+                <Input
+                  {...register('indicativeRentFrom')}
+                  type="number"
+                  placeholder="Monthly Rent"
+                  className="h-12 text-white"
+                />
               </div>
             </div>
 
+            {/* AVAILABLE MONTH */}
             <div>
               <label className="text-sm font-semibold text-white mb-2 block">Available From</label>
-              <Input {...register('month')} placeholder="Available From" className="h-12  border border-[#BFBFBF] text-white" />
+              <Input
+                {...register('month')}
+                placeholder="Available From"
+                className="h-12 text-white"
+              />
             </div>
 
+            {/* DESCRIPTION */}
             <div>
               <label className="text-sm font-semibold text-white mb-2 block">Description</label>
               <Textarea
                 {...register('description')}
                 rows={5}
                 placeholder="Description..."
-                className=" border border-[#BFBFBF] text-white placeholder-gray-400"
+                className="text-white"
               />
             </div>
 
-            {/* Image Upload */}
+            {/* IMAGE UPLOAD */}
             <div>
-              <label className="text-sm font-semibold text-white mb-2 block">Property Image (Thumbnail)</label>
-              <div className="relative border-2 border-dashed border-white/30 rounded-xl p-10 text-center hover:border-cyan-400 transition">
+              <label className="text-sm font-semibold text-white mb-2 block">
+                Property Image
+              </label>
+
+              <div className="relative border-2 border-dashed border-white/30 rounded-xl p-10 text-center">
                 {uploadedImage ? (
                   <div className="relative">
-                    <Image src={uploadedImage} alt="Thumbnail" width={800} height={400} className="mx-auto rounded-lg max-h-80 object-cover" />
+                    <Image
+                      src={uploadedImage}
+                      alt="Thumbnail"
+                      width={800}
+                      height={400}
+                      className="mx-auto rounded-lg max-h-80 object-cover"
+                    />
+
                     <button
                       type="button"
                       onClick={() => {
                         setUploadedImage(null)
                         setUploadedImageFile(null)
                       }}
-                      className="absolute top-3 right-3 bg-red-600 text-white rounded-full p-2 hover:bg-red-700"
+                      className="absolute top-3 right-3 bg-red-600 text-white rounded-full p-2"
                     >
                       ×
                     </button>
@@ -324,10 +417,10 @@ export function SupplierListingForm() {
                 ) : (
                   <>
                     <Upload className="mx-auto h-16 w-16 text-cyan-400 mb-4" />
-                    <p className="text-gray-300 text-lg">Click to upload</p>
-                    <p className="text-xs text-gray-400 mt-2">Max 10MB • JPG, PNG</p>
+                    <p className="text-gray-300">Click to upload</p>
                   </>
                 )}
+
                 <input
                   type="file"
                   accept="image/*"
@@ -337,17 +430,18 @@ export function SupplierListingForm() {
               </div>
             </div>
 
-            {/* Submit */}
+            {/* SUBMIT BUTTON */}
             <Button
               type="submit"
-              className="w-full h-14 text-lg font-semibold bg-gradient hover:bg-gradient/80 text-white rounded-xl shadow-xl"
-              disabled={mutation.isPending || !token}
+              className="w-full h-14 text-lg font-semibold bg-gradient text-white rounded-xl shadow-xl"
+              disabled={mutation.isPending}
             >
               {mutation.isPending ? 'Uploading...' : 'Add Property Listing'}
             </Button>
           </form>
         </Card>
 
+        {/* MAP MODAL */}
         <MapModal
           isOpen={isMapOpen}
           onClose={() => setIsMapOpen(false)}

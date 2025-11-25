@@ -1,4 +1,5 @@
 import AboutSection from "@/components/web/about-section";
+import AgentCarousel from "@/components/web/AgentCarousel";
 import BrowseProperties from "@/components/web/browse-properties";
 import FeaturedListings from "@/components/web/featured-listings";
 import Hero from "@/components/web/hero";
@@ -15,6 +16,7 @@ export default function Home() {
       <MapSection />
       <FeaturedListings />
       <BrowseProperties/>
+      <AgentCarousel/>
       <AboutSection />
    
     </main>

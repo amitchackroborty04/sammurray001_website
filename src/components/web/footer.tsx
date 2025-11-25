@@ -79,7 +79,7 @@ export default function Footer() {
     { name: "Home", href: "/" },
     { name: "Find Space", href: "/find-space" },
     { name: "Find Tenants", href: "/find-tenants" },
-    { name: "List Space", href: "/list-space" },
+    { name: "pricing", href: "/pricing" },
     { name: "Pricing", href: "/pricing" },
     { name: "About Us", href: "/about-us" },
     { name: "Terms & Conditions", href: "/terms" },

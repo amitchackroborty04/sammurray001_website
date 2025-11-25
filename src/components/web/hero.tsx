@@ -130,7 +130,7 @@ export default function Hero() {
             </div>
 
             {/* Right Search Form */}
-            <div className="flex-1 max-w-full lg:max-w-[527px] bg-white rounded-lg p-6 space-y-4 shadow-lg">
+            <div className="flex-1 max-w-full lg:max-w-[400px] bg-white rounded-lg p-6 space-y-4 shadow-lg">
               <h3 className="text-[26px] md:text-[32px] font-semibold text-[#000000]">
                 Search properties
               </h3>
