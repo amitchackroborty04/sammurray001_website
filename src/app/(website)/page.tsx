@@ -3,6 +3,7 @@ import AgentCarousel from "@/components/web/AgentCarousel";
 import BrowseProperties from "@/components/web/browse-properties";
 import FeaturedListings from "@/components/web/featured-listings";
 import Hero from "@/components/web/hero";
+
 import MapSection from "@/components/web/map-section";
 import ProcessSteps from "@/components/web/process-steps";
 

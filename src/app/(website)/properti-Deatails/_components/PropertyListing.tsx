@@ -6,16 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import { MapPin, Mail, Phone } from "lucide-react";
 import Image from "next/image";
 import ContactForm from "../_components/contact-form";
-import { jwtDecode } from "jwt-decode";
 import PropertySkeleton from "./PropertySkeleton";
+import { useApp } from "@/lib/AppContext";
 
-// Types
-interface TokenPayload {
-  id: string;
-  role: string;
-  email: string;
-  isSubscription: boolean;
-}
+
 
 interface ListingData {
   _id: string;
@@ -42,19 +36,8 @@ export default function PropertyListing() {
   const { id } = useParams();
   const { data: session } = useSession();
   const token = session?.user?.accessToken || null;
-
-  // const [isWishlisted, setIsWishlisted] = useState(false);
-
-  // Decode token to check subscription
-  let userSubscription = false;
-  if (token) {
-    try {
-      const decoded: TokenPayload = jwtDecode(token);
-      userSubscription = decoded.isSubscription || false;
-    } catch (err) {
-      console.error("Invalid token :", err);
-    }
-  }
+ const { user } = useApp();
+ console.log(user)
 
   const fetchListing = async (): Promise<ListingData> => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/property/${id}`, {
@@ -86,7 +69,11 @@ export default function PropertyListing() {
     );
   }
 
+    const showMessageButton =
+    (user?.activeInactiveSubcrib === "active" && user.isSubscription) ||
+    (user?.activeInactiveSubcrib === "inactive" && !user.isSubscription);
   // Main Rendered UI
+
   return (
     <div className="min-h-screen container mx-auto py-[24px]">
       {/* Hero Image */}
@@ -161,7 +148,7 @@ export default function PropertyListing() {
           {/* Right Column */}
           <div className="space-y-6">
             {/* Contact Form - Only for subscribed users */}
-            {token && userSubscription && <ContactForm formattedPrice={formattedPrice} id={id} />}
+            {showMessageButton && <ContactForm formattedPrice={formattedPrice} id={id} />}
 
             {/* Agent Card */}
             <div className="bg-white/10 backdrop-blur-sm p-6 sm:p-8 rounded-xl border border-white/5">
@@ -200,3 +187,5 @@ export default function PropertyListing() {
     </div>
   );
 }
+
+

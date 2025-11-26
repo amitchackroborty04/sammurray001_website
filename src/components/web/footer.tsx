@@ -1,3 +1,6 @@
+
+
+
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -24,7 +27,7 @@ function TermsModal({
     if (typeof window !== "undefined") {
       localStorage.setItem("terms_accepted", "true")
     }
-    onAgree() // notify parent that terms are accepted
+    onAgree()
     onClose()
   }
 
@@ -66,10 +69,10 @@ export default function Footer() {
   const pathname = usePathname()
   const { user } = useApp()
 
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(true)
 
-  // Check localStorage once on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const accepted = localStorage.getItem("terms_accepted") === "true"
@@ -91,34 +94,30 @@ export default function Footer() {
     <>
       <div className="bg-white mx-2 md:mx-2 rounded-tl-[32px] rounded-tr-[32px]">
         <footer>
-          {/* Chat CTA Section */}
+          {/* Chat CTA */}
           <div className="container mx-auto px-4 py-12 md:py-20">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-12 text-center md:text-left">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-12">
               <div>
-                <h1 className="text-2xl md:text-[42px] font-bold text-[#000] mb-3 md:mb-4">
+                <h1 className="text-2xl md:text-[42px] font-bold text-[#000] mb-3">
                   Let&apos;s chat about your
                 </h1>
-                <h1 className="bg-text-gradient bg-clip-text text-transparent text-2xl md:text-[48px] font-bold leading-tight md:leading-[1.2]">
+                <h1 className="text-2xl bg-text-gradient bg-clip-text text-transparent md:text-[48px] font-bold leading-tight">
                   dreams and goals.
                 </h1>
+
               </div>
 
-              <Button
-                className={`${
-                 
-                  "!bg-gradient hover:bg-gradient/95"
-                } h-[48px] md:h-[56px] px-8 md:px-[50px] text-white text-sm md:text-base`}
-                
-              >
+              <Button className="!bg-gradient hover:bg-gradient/95 h-[48px] md:h-[56px] px-8 md:px-[50px] text-white">
                 Let&apos;s talk →
               </Button>
             </div>
           </div>
 
-          {/* Footer Content */}
-          <div className="bg-[#070E28] rounded-t-[32px] md:rounded-t-[40px] px-4 sm:px-6 md:px-8 lg:px-12 py-10 md:py-16 mx-1 md:mx-3">
+          {/* Footer Main */}
+          <div className="bg-[#070E28] rounded-t-[32px] md:rounded-t-[40px] px-4 md:px-12 py-10 md:py-16 mx-1 md:mx-3">
             <div className="container mx-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12 mb-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
                 {/* Brand */}
                 <div>
                   <Image
@@ -128,40 +127,34 @@ export default function Footer() {
                     height={40}
                     className="w-[150px] h-[40px] object-cover mb-4"
                   />
-                  <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-4">
-                    A smart platform connecting businesses looking for space with developers and property owners.
-                  </p>
-                  <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                    Discover, list, and match spaces with clarity, privacy, and simplicity.
+                  <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                    A smart platform connecting businesses with developers and property owners.
                   </p>
                 </div>
 
                 {/* Quick Links */}
                 <div>
-                  <h4 className="font-semibold text-lg md:text-xl text-white mb-4">Quick Links</h4>
+                  <h4 className="font-semibold text-lg text-white mb-4">Quick Links</h4>
                   <nav className="grid grid-cols-2 md:grid-cols-1 gap-2">
                     {quickLinks.map((item) => {
                       const isActive = pathname === item.href
+                      const isPricing = item.name.toLowerCase() === "pricing"
+                      const isSubscribed = user?.activeInactiveSubcrib === "active"
 
-                      // Handle Pricing link based on subscription
-                      if (item.name.toLowerCase() === "pricing") {
-                        const isSubscribedActive = user?.activeInactiveSubcrib === "active"
-
-                        return isSubscribedActive ? (
+                      if (isPricing) {
+                        return isSubscribed ? (
                           <Link
                             key={item.name}
                             href={item.href}
-                            className={`
-                              text-sm md:text-[17px] block px-1 py-1 transition 
-                              ${isActive ? "text-gradient font-semibold" : "text-[#C5C5C5] hover:text-cyan-400"}
-                            `}
+                            className={`text-sm block px-1 py-1 transition 
+                              ${isActive ? "text-gradient font-semibold" : "text-[#C5C5C5] hover:text-cyan-400"}`}
                           >
                             {item.name}
                           </Link>
                         ) : (
                           <span
                             key={item.name}
-                            className="text-sm md:text-[17px] block px-1 py-1 text-gray-500 cursor-not-allowed"
+                            className="text-sm px-1 py-1 text-gray-500 cursor-not-allowed"
                             title="Subscription inactive"
                           >
                             {item.name}
@@ -173,10 +166,8 @@ export default function Footer() {
                         <Link
                           key={item.name}
                           href={item.href}
-                          className={`
-                            text-sm md:text-[17px] block px-1 py-1 transition 
-                            ${isActive ? "text-gradient font-semibold" : "text-[#C5C5C5] hover:text-cyan-400"}
-                          `}
+                          className={`text-sm block px-1 py-1 transition 
+                            ${isActive ? "text-gradient font-semibold" : "text-[#C5C5C5] hover:text-cyan-400"}`}
                         >
                           {item.name}
                         </Link>
@@ -185,26 +176,24 @@ export default function Footer() {
                   </nav>
                 </div>
 
-                {/* Social & Contact */}
+                {/* Social */}
                 <div>
-                  <h4 className="font-semibold text-lg md:text-xl text-white mb-4">Follow Us</h4>
-                  <div className="flex gap-3 mb-6 justify-center md:justify-start">
+                  <h4 className="font-semibold text-lg text-white mb-4">Follow Us</h4>
+                  <div className="flex gap-3 mb-6">
                     {[Facebook, Instagram, Dribbble].map((Icon, i) => (
                       <button
                         key={i}
-                        className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center hover:bg-cyan-600 transition text-white"
+                        className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center text-white hover:bg-cyan-600"
                       >
                         <Icon size={18} />
                       </button>
                     ))}
                   </div>
 
-                  <p className="text-[#C5C5C5] text-sm md:text-base font-medium mb-1 text-center md:text-left">
-                    For inquiries:
-                  </p>
+                  <p className="text-[#C5C5C5] text-sm mb-1">For inquiries:</p>
                   <a
                     href="mailto:hello@propertynexus.io"
-                    className="text-cyan-400 text-sm md:text-base hover:text-cyan-300 transition block text-center md:text-left"
+                    className="text-cyan-400 text-sm hover:text-cyan-300"
                   >
                     hello@propertynexus.io
                   </a>
@@ -212,20 +201,25 @@ export default function Footer() {
               </div>
 
               {/* Bottom Section */}
-              <div className="mt-8 pt-6 border-t border-slate-700 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
-                <p className="text-[#C5C5C5] text-sm md:text-base">
+              <div className="mt-8 pt-6 border-t border-slate-700 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p className="text-[#C5C5C5] text-sm">
                   © All rights reserved - Property Nexus 2025
                 </p>
 
+
+                {/* NEW SUBSCRIPTION MESSAGE */}
+                <p className="text-[#C5C5C5] text-sm font-semibold">
+                  {user?.activeInactiveSubcrib === "active"
+                    ? "Subscription is active"
+                    : "This website 100% free now"}
+                </p>
                 <p className="text-[#C5C5C5] text-xs md:text-sm max-w-lg text-center md:text-left">
                   Property Nexus uses cookies and analytics to help us improve your experience.
                 </p>
-
-                {/* Only show Continue button if terms not accepted */}
                 {!hasAcceptedTerms && (
                   <Button
                     onClick={() => setIsModalOpen(true)}
-                    className="bg-gradient hover:bg-gradient/95 h-[44px] px-8 text-white text-sm md:text-base"
+                    className="bg-gradient hover:bg-gradient/95 h-[44px] px-8 text-white"
                   >
                     Continue
                   </Button>
@@ -236,11 +230,11 @@ export default function Footer() {
         </footer>
       </div>
 
-      {/* Terms & Conditions Modal */}
+      {/* Terms Modal */}
       <TermsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAgree={() => setHasAcceptedTerms(true)} // hide button immediately
+        onAgree={() => setHasAcceptedTerms(true)}
       />
     </>
   )

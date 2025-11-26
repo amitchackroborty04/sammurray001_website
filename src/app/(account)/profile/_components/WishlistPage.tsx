@@ -38,7 +38,7 @@ const WishListPage = () => {
       {wishlist.length === 0 ? (
         <p className="text-gray-400">No items in your wishlist yet.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
           {wishlist.map((listing) => (
             <div
               key={listing.id}

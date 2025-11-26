@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -7,40 +6,6 @@ import ListingCard, { Listing } from "../Reuseable_cards/PropertiesCard";
 import { useSession } from "next-auth/react";
 import { useApp } from "@/lib/AppContext";
 
-// =======================
-// API Types
-// =======================
-interface ApiProperty {
-  _id: string;
-  type: { name: string };
-  title: string;
-  price: number;
-  address: string;
-  city: string;
-  country: string;
-  thumble: string;
-  description?: string;
-  size?: string;
-  areaya?: string;
-}
-
-interface ApiResponse {
-  statusCode: number;
-  success: boolean;
-  message: string;
-  data: ApiProperty[];
-}
-
-
-
-interface contexporops{
-  isSubscription: boolean;
-  activeInactiveSubcrib: string
-}
-
-// =======================
-// Format Price
-// =======================
 const formatPrice = (price: number): string => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -49,63 +14,63 @@ const formatPrice = (price: number): string => {
     maximumFractionDigits: 0,
   }).format(price);
 };
-
-// =======================
-// FeaturedListings Component
-// =======================
+interface userprops {
+ 
+    isSubscription: boolean;
+    activeInactiveSubcrib: string;
+ 
+}
 export default function FeaturedListings() {
-  const session = useSession();
-   const { user} = useApp();
-  //  console.log(user)
-  const token = session.data?.user?.accessToken || "";
-  // let isSubscriber = false;
+  const  session  = useSession();
+  const { user } = useApp();
+  const token = session?.data?.user?.accessToken || "";
 
-  // if (token) {
-  //   try {
-  //     const decoded: DecodedToken = jwtDecode(token);
-  //     isSubscriber = decoded.isSubscription;
-  //   } catch (error) {
-  //     console.error("Invalid token:", error);
-  //   }
-  // }
-
-  const { data: response, isLoading, isError } = useQuery<ApiResponse>({
+  const { data: response, isLoading, isError } = useQuery<any>({
     queryKey: ["featured-properties", token],
     queryFn: async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/property/`, {
-        method: "GET",
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Failed to fetch properties: ${res.status} ${errorText}`);
-      }
-
+      if (!res.ok) throw new Error("Failed");
       return res.json();
     },
     staleTime: 1000 * 60 * 5,
-    retry: 1,
   });
-  // console.log(response)
 
-  const listings: Listing[] =
-    response?.data.map((property): Listing => ({
+ 
+  const listings: Listing[] = response?.data.map((property: any): Listing => {
+    const agent = property.supplyerIdCreateIdAgent;
+ 
+
+    return {
       id: property._id,
-      user: property._id || "", // ✅ এখানে যোগ করো
-      image: property.thumble || "/assets/fallback-image.png",
+      user: property.user || property._id,
+      image: property.thumble || "/placeholder.svg",
       type: property.type?.name || "Unknown",
-      badge: "Top pick",
+      badge: agent && "Verified Agent" ,
       price: formatPrice(property.price),
       priceUnit: "USD",
       area: property.size || "N/A",
       title: property.title,
       description: property.description || "No description available",
       location: property.areaya ? `${property.areaya}, ${property.city}` : property.city,
-    })) || [];
+
+    
+      agent: agent ? {
+        name: agent.fullName,
+        profileImage: agent.profileImage || "https://avatar.iran.liara.run/public/boy",
+        phone: agent.phone,
+        agencyLogo: agent.agencyLogo,
+        website: agent.website,
+        verified: agent.verified || false,
+        isSubscription: agent.isSubscription,
+        activeInactiveSubcrib: agent.activeInactiveSubcrib || "inactive",
+      } : undefined,
+    };
+  }) || [];
 
   const SkeletonCard = () => (
     <div className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-gray-700 transition-all duration-300 group">
@@ -115,7 +80,6 @@ export default function FeaturedListings() {
           <div className="px-4 py-2 bg-gray-700 rounded-full w-24 h-8 animate-pulse" />
         </div>
       </div>
-
       <div className="p-6 space-y-4">
         <div className="flex justify-between items-start">
           <div className="h-6 bg-gray-700 rounded w-32 animate-pulse" />
@@ -125,13 +89,6 @@ export default function FeaturedListings() {
         <div className="space-y-2">
           <div className="h-4 bg-gray-800 rounded w-full animate-pulse" />
           <div className="h-4 bg-gray-800 rounded w-4/5 animate-pulse" />
-        </div>
-        <div className="flex justify-between items-center pt-2">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-gray-700 rounded animate-pulse" />
-            <div className="h-4 bg-gray-700 rounded w-40 animate-pulse" />
-          </div>
-          <div className="h-4 bg-gray-700 rounded w-24 animate-pulse" />
         </div>
       </div>
     </div>
@@ -151,23 +108,23 @@ export default function FeaturedListings() {
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
+            {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : isError ? (
-          <div className="text-center py-16">
-            <p className="text-red-400 text-lg">Failed to load properties. Please try again later.</p>
-          </div>
+          <div className="text-center py-16 text-red-400">Failed to load</div>
         ) : listings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             {listings.slice(0, 4).map((listing) => (
-              <ListingCard key={listing.id} listing={listing} isSubscriber={user as contexporops} />
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                isSubscriber={user as userprops}
+              />
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <p className="text-gray-400 text-lg">No featured properties available at the moment.</p>
+          <div className="text-center py-16 text-gray-400">
+            No featured properties available.
           </div>
         )}
       </div>

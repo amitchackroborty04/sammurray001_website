@@ -1,6 +1,5 @@
 
 
-
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -8,59 +7,24 @@ import ListingCard, { Listing } from "../Reuseable_cards/PropertiesCard";
 import { useSession } from "next-auth/react";
 import { useApp } from "@/lib/AppContext";
 
-interface ApiProperty {
-  _id: string;
-  user?: string;
-  type: { name: string };
-  title: string;
-  price: number;
-  address: string;
-  city: string;
-  country: string;
-  thumble: string;
-  description?: string;
-  size?: string;
-  areaya?: string;
-}
-
-interface ApiResponse {
-  statusCode: number;
-  success: boolean;
-  message: string;
-  data: ApiProperty[];
-}
-
-
-interface contexporops{
+interface contexporops {
   isSubscription: boolean;
-  activeInactiveSubcrib: string
+  activeInactiveSubcrib: string;
 }
 
 const formatPrice = (price: number): string =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
+    minimumFractionDigits: 0,
   }).format(price);
 
 export default function BrowseProperties() {
- 
-   const { user} = useApp();
-   const session  = useSession();
+  const { user } = useApp();
+  const session = useSession();
   const token = session.data?.user?.accessToken || "";
-  // let isSubscriber = false;
- 
-  // let isSubscriber = false;
 
-  // if (token) {
-  //   try {
-  //     const decoded: DecodedToken = jwtDecode(token);
-  //     isSubscriber = decoded.isSubscription;
-  //   } catch (error) {
-  //     console.error("Invalid token:", error);
-  //   }
-  // }
-
-  const { data: response, isLoading, isError } = useQuery<ApiResponse>({
+  const { data: response, isLoading, isError } = useQuery<any>({
     queryKey: ["browse-properties", token],
     queryFn: async () => {
       const res = await fetch(
@@ -74,21 +38,29 @@ export default function BrowseProperties() {
         }
       );
 
-      if (!res.ok) throw new Error("Failed to fetch properties");
-
+      if (!res.ok) {
+        const error = await res.text();
+        throw new Error(`Failed to fetch: ${error}`);
+      }
       return res.json();
     },
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });
 
-  const listings: Listing[] =
-    response?.data.map((property) => ({
+  // এখানে শুধু agent data পাঠানো হচ্ছে – কোনো UI চেঞ্জ নাই
+  const listings: Listing[] = response?.data.map((property: any) => {
+    const agent = property.supplyerIdCreateIdAgent;
+
+    // Console এ দেখার জন্য – ডিবাগ করো
+    console.log("Property:", property.title, "→ Agent:", agent);
+
+    return {
       id: property._id,
-      user: property.user || "",
+      user: property.user || property._id,
       image: property.thumble || "/assets/fallback-image.png",
       type: property.type?.name || "Unknown",
-      badge: "Top pick",
+      badge: agent && "Verified Agent" ,
       price: formatPrice(property.price),
       priceUnit: "USD",
       area: property.size || "N/A",
@@ -97,9 +69,24 @@ export default function BrowseProperties() {
       location: property.areaya
         ? `${property.areaya}, ${property.city}`
         : property.city,
-    })) || [];
 
-  // Skeleton
+  
+      agent: agent
+        ? {
+            name: agent.fullName,
+            profileImage: agent.profileImage || "https://avatar.iran.liara.run/public/boy",
+            phone: agent.phone,
+            agencyLogo: agent.agencyLogo,
+            website: agent.website,
+            verified: agent.verified || false,
+            isSubscription: agent.isSubscription,
+            activeInactiveSubcrib: agent.activeInactiveSubcrib || "inactive",
+          }
+        : null,
+    };
+  }) || [];
+
+
   const SkeletonCard = () => (
     <div className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 animate-pulse">
       <div className="h-64 bg-gray-800" />
@@ -125,8 +112,8 @@ export default function BrowseProperties() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[...Array(4)].map((_, i) => (
+          <div className="grid grid Η-cols-1 md:grid-cols-2 gap-6">
+            {[...Array(6)].map((_, i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
@@ -135,16 +122,13 @@ export default function BrowseProperties() {
             Failed to load properties. Try again later.
           </p>
         ) : listings.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 gap-y-6">
             {listings.map((listing) => (
-
-              <ListingCard key={listing.id} listing={listing}isSubscriber={user as contexporops} />
-
-              // <ListingCard
-              //   key={listing.id}
-              //   listing={listing}
-              //   isSubscriber={isSubscriber}
-              // />
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                isSubscriber={user as contexporops}
+              />
             ))}
           </div>
         ) : (
