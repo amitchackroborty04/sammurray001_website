@@ -48,12 +48,11 @@ export default function BrowseProperties() {
     retry: 1,
   });
 
-  // এখানে শুধু agent data পাঠানো হচ্ছে – কোনো UI চেঞ্জ নাই
+
   const listings: Listing[] = response?.data.map((property: any) => {
     const agent = property.supplyerIdCreateIdAgent;
 
-    // Console এ দেখার জন্য – ডিবাগ করো
-    console.log("Property:", property.title, "→ Agent:", agent);
+   
 
     return {
       id: property._id,

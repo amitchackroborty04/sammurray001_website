@@ -120,12 +120,12 @@ export default function Hero() {
   // Loading State
   if (isLoading) {
     return (
-      <section className="relative">
+      <section className="relative ">
         <div
           className="h-[822px] flex items-end justify-center bg-cover bg-center"
           style={{ backgroundImage: "url(/assets/herobg.png)" }}
         >
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-10 bg-black/50">
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-20">
               <div className="flex-1 space-y-8 lg:space-y-0 lg:justify-between flex-col">
                 <div className="space-y-4">
@@ -134,7 +134,7 @@ export default function Hero() {
                   <SkeletonLine height="68px" className="w-8/12" />
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 mt-3">
                   <SkeletonButton width="220px" />
                   <SkeletonButton width="240px" />
                 </div>
