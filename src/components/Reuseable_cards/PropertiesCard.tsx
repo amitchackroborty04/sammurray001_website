@@ -256,7 +256,7 @@ interface ListingCardProps {
 }
 
 export default function ListingCard({ listing, isSubscriber }: ListingCardProps) {
-  // console.log(listing)
+  console.log(listing)
   const [isWishlisted, setIsWishlisted] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
@@ -290,7 +290,7 @@ export default function ListingCard({ listing, isSubscriber }: ListingCardProps)
     window.dispatchEvent(new Event("storage"));
   };
 
-  // Message Button Logic (তোমার পুরানো লজিক অক্ষত)
+
   const showMessageButton =
     (isSubscriber?.activeInactiveSubcrib === "active" && isSubscriber.isSubscription) ||
     (isSubscriber?.activeInactiveSubcrib === "inactive" && !isSubscriber.isSubscription);
@@ -328,7 +328,7 @@ export default function ListingCard({ listing, isSubscriber }: ListingCardProps)
         <Link href={`/properti-Deatails/${listing.id}`}>
           <div className="relative overflow-hidden cursor-pointer">
             <Image
-              src={listing.image || "/placeholder.svg"}
+              src={listing.image?.[0] || "/placeholder.svg"}
               alt={listing.title}
               width={1000}
               height={1000}
