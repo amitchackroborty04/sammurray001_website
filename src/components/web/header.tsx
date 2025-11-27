@@ -72,16 +72,16 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-[#070E28] border-b border-slate-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex justify-between items-center ">
 
             <Link href="/" className="flex-shrink-0">
               <Image 
                 src="/assets/logo.jpg" 
                 alt="Logo" 
-                width={100} 
-                height={100} 
-                className="w-[100px] lg:w-[141px] h-[80px] lg:h-[70px] object-cover"
+                width={1000} 
+                height={1000} 
+                className="w-[100px] lg:w-[141px] h-[80px] lg:h-[40px] object-cover"
               />
             </Link>
 
