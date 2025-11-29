@@ -147,6 +147,11 @@ const ProfileLayout: React.FC = () => {
     );
   }
 
+ const handleSingout =  () => {
+  signOut();
+  window.location.href = "/";
+};
+
   return (
     <div className="min-h-screen text-white p-8">
       <div className="max-w-7xl mx-auto">
@@ -227,7 +232,7 @@ const ProfileLayout: React.FC = () => {
 
               {/* Logout Button */}
               <button
-                onClick={() => signOut()}
+                onClick={handleSingout}
                 className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-slate-800 transition-colors mt-4"
               >
                 <LogOut className="w-5 h-5" />

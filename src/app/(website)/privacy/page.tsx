@@ -127,7 +127,7 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-bold text-accent sm:text-2xl">9. Contact Us</h2>
               <p className="mt-4 leading-relaxed text-[#FFFFFF]">For questions about privacy, contact:</p>
               <p className="mt-4 text-[#FFFFFF]">
-                <a href="mailto:support@propertynexus.io" className="text-[#4A0DFF] hover:text-accent transition-colors">
+                <a href="mailto:support@propertynexus.io" className="bg-gradient bg-clip-text text-transparent transition-colors">
                   support@nexus.io
                 </a>
               </p>
